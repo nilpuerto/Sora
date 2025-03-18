@@ -1,21 +1,26 @@
 <script setup>
-
+import Home2View from './Home2View.vue';
 </script>
 
 <template>
   <main>
-    <video autoplay muted loop id="background-video">
-      <source src="/video_Sora.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <TheWelcome />
-    <footer>
-      <img src="/soralogo.svg" alt="Sora Logo" id="sora-logo" />
-      <p id="footer-text">Sora redefines how you interact with technology—just speak, and AI takes care of the rest. With advanced voice recognition and intelligent scheduling, you can create events effortlessly.
+    <section id="home-section">
+      <video autoplay muted loop id="background-video">
+        <source src="/video_Sora.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <TheWelcome />
+      <footer>
+        <img src="/soralogo.svg" alt="Sora Logo" id="sora-logo"/>
+        <p id="footer-text">Sora redefines how you interact with technology—just speak, and AI takes care of the rest. With advanced voice recognition and intelligent scheduling, you can create events effortlessly.
 
 No typing, no hassle—just seamless <span class="colorFont">AI-driven</span> assistance. Welcome to the future with Sora.</p>
-      <button id="get-started-button">Get Started</button>
-    </footer>
+        <button id="get-started-button">Get Started</button>
+
+        <font-awesome-icon :icon="['fas', 'chevron-up']" class="arrowIcon" />
+      </footer>
+    </section>
+    <Home2View />
   </main>
 </template>
 
@@ -23,18 +28,37 @@ No typing, no hassle—just seamless <span class="colorFont">AI-driven</span> as
 main {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: auto;
+  overflow-x: hidden; 
+  overflow-y: auto; 
+  user-select: none;
+
+}
+
+.arrowIcon {
+  color: white;
+  bottom: 20px;
+  margin-left: 84%;
+  font-size: 24px;
+  rotate: 180deg;
+  cursor: none;
+}
+
+
+#home-section {
+  position: relative;
+  width: 100%;
+  height: 100vh; 
   overflow: hidden;
 }
 
 #background-video {
   position: absolute;
-  top: 50%;
-  left: 50%; 
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: translate(-50%, -50%);
   z-index: -1;
   opacity: 0.7;
   mix-blend-mode: lighten; 
@@ -46,7 +70,6 @@ footer {
   left: 1.1%;
   width: 100%;
   color: white;
-  
 }
 
 #sora-logo {
@@ -54,6 +77,8 @@ footer {
   height: auto;
   margin-left: 20px; 
   margin-top: 20px;
+  user-select: none;
+  pointer-events: none;
 }
 
 #footer-text {

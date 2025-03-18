@@ -5,17 +5,16 @@ html, body {
   width: 100%;
   background-color: black;
   font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
   
 }
 
 #app {
-  height: 100vh;
+  height: auto;
   width: 100vw;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block; 
   position: relative;
-  z-index: 1; /* Asegura que el contenido esté por encima del video */
+  z-index: 1;
 }
