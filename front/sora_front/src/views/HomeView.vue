@@ -1,7 +1,3 @@
-<script setup>
-import Home2View from './Home2View.vue';
-</script>
-
 <template>
   <main>
     <section id="home-section">
@@ -24,15 +20,26 @@ No typing, no hassle—just seamless <span class="colorFont">AI-driven</span> as
   </main>
 </template>
 
+<script setup>
+import Home2View from './Home2View.vue';
+</script>
+
 <style scoped>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 main {
   position: relative;
   width: 100%;
-  height: auto;
+  height: 100vh;
   overflow-x: hidden; 
   overflow-y: auto; 
   user-select: none;
-
 }
 
 .arrowIcon {
@@ -42,8 +49,24 @@ main {
   font-size: 24px;
   rotate: 180deg;
   cursor: none;
+  opacity: 0;
+  animation: arrowAnimation 2s infinite;
 }
 
+@keyframes arrowAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
 
 #home-section {
   position: relative;
@@ -66,7 +89,7 @@ main {
 
 footer {
   position: relative;
-  top: 55%;
+  top: 51%;
   left: 1.1%;
   width: 100%;
   color: white;

@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar" :class="{ hidden: isHidden }">
     <ul class="nav-links">
       <li><RouterLink to="/">Home</RouterLink></li>
       <li><RouterLink to="/about">About</RouterLink></li>
@@ -12,7 +12,29 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue';
+import { RouterLink } from 'vue-router';
+
+const isHidden = ref(false);
+let lastScrollTop = 0;
+
+const handleScroll = () => {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  if (scrollTop > lastScrollTop) {
+    isHidden.value = true; 
+  } else {
+    isHidden.value = false; 
+  }
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>
@@ -26,7 +48,11 @@ import { RouterLink } from 'vue-router'
   display: flex;
   align-items: center;
   z-index: 1000;
-  
+  transition: top 0.3s ease;
+}
+
+.navbar.hidden {
+  top: -100px; 
 }
 
 .nav-links {
@@ -39,7 +65,6 @@ import { RouterLink } from 'vue-router'
 
 .nav-links li {
   font-size: 18px;
-  
 }
 
 .nav-links a {
