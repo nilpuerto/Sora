@@ -1,5 +1,6 @@
 <template>
-  <nav class="navbar" :class="{ hidden: isHidden }">
+  <nav :class="['navbar', { 'scrolled': isScrolled }]">
+    <img src="/sora.svg" alt="Sora Logo" id="sora-logo" />
     <ul class="nav-links">
       <li><RouterLink to="/">Home</RouterLink></li>
       <li><RouterLink to="/about">About</RouterLink></li>
@@ -12,20 +13,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
 import { RouterLink } from 'vue-router';
+import { ref, onMounted, onUnmounted } from 'vue';
 
-const isHidden = ref(false);
-let lastScrollTop = 0;
+const isScrolled = ref(false);
 
 const handleScroll = () => {
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  if (scrollTop > lastScrollTop) {
-    isHidden.value = true; 
-  } else {
-    isHidden.value = false; 
-  }
-  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
+  isScrolled.value = window.scrollY > 10;
 };
 
 onMounted(() => {
@@ -39,39 +33,47 @@ onUnmounted(() => {
 
 <style scoped>
 .navbar {
-  position: fixed;
-  top: 22px;
-  left: 60%;
-  transform: translateX(-50%);
-  width: 75%;
-  padding: 15px 20px;
   display: flex;
   align-items: center;
-  z-index: 1000;
-  transition: top 0.3s ease;
+  justify-content: space-between;
+  position: fixed;
+  top: 3px;
+  left: 0;
+  width: 98.2%;
+  padding: 20px 1.5% 20px 1.2%;
+  z-index: 1000; 
 }
 
-.navbar.hidden {
-  top: -100px; 
+.navbar.scrolled {
+  background: rgba(0, 0, 0, 0.8); 
+  backdrop-filter: blur(20px); 
+  -webkit-backdrop-filter: blur(20px); 
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  border-image-slice: 1;
+}
+
+#sora-logo {
+  width: 30px; 
+  margin-left: 10px; 
 }
 
 .nav-links {
-  list-style: none;
   display: flex;
-  gap: 40px; 
-  margin: 0 auto; 
+  gap: 38px; 
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
 
 .nav-links li {
-  font-size: 18px;
+  font-size: 14px; 
 }
 
 .nav-links a {
   text-decoration: none;
-  color: rgb(255, 255, 255);
+  color: white;
   transition: color 0.3s ease;
-  font-size: 15px;
 }
 
 .nav-links a:hover {
@@ -81,23 +83,22 @@ onUnmounted(() => {
 #sign-in-button {
   display: inline-block;
   padding: 5px 10px;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: bold;
-  color: rgb(0, 0, 0);
+  color: black;
   background-color: #e1fd12;
   border: none;
-  border-radius: 20px;
+  border-radius: 15px;
   cursor: pointer;
-  transition: background-position 0.5s ease, box-shadow 0.5s ease;
-  background-size: 200% 200%;
-  background-image: linear-gradient(135deg, #e1fd12 50%, #d4e10c 50%);
+  transition: background-position 0.5s ease, box-shadow 0.5s ease; 
+  background-size: 200% 200%; 
+  background-image: linear-gradient(135deg, #e1fd12 50%, #d4e10c 50%); 
   background-position: 0 0;
-  width: 100px;
-  margin-left: auto; 
+  margin-right: 20px;
 }
 
 #sign-in-button:hover {
-  background-position: 100% 100%;
-  box-shadow: 0 0 10px #e1fd12;
+  background-position: 100% 100%; 
+  box-shadow: 0 0 10px #e1fd12; 
 }
 </style>

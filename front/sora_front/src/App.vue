@@ -7,7 +7,6 @@ import NavBar from './views/NavBar.vue'
 <template>
   
   <div id="app">   
-    <img src="/sora.svg" alt="Sora Logo" id="sora-logo" />
     <NavBar />
     <RouterView />
   </div>
@@ -18,27 +17,21 @@ import NavBar from './views/NavBar.vue'
   position: relative;
 }
 
-#sora-logo {
-  position: absolute;
-  top: 30px;
-  left: 35px;
-  width: 34px;
-  height: auto;
+::-webkit-scrollbar {
+  width: 8px; /* Cambia el ancho de la barra de desplazamiento */
 }
 
-@media (max-width: 768px) {
-  #sora-logo {
-    width: 25px;
-    left: 10px;
-    top:20px,
-  }
+::-webkit-scrollbar-track {
+  background: transparent; /* Fondo del track de la barra */
 }
 
-@media (max-width: 480px) {
-  #sora-logo {
-    width: 25px;
-    top: 20px;
-    left: 23px;
-  }
+::-webkit-scrollbar-thumb {
+  background: black; /* Color de la barra de desplazamiento */
+  border-radius: 10px; /* Bordes redondeados */
 }
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333; /* Color más claro al pasar el mouse */
+}
+
 </style>

@@ -22,6 +22,17 @@ No typing, no hassle—just seamless <span class="colorFont">AI-driven</span> as
 
 <script setup>
 import Home2View from './Home2View.vue';
+window.addEventListener('scroll', () => {
+    const elementos = document.querySelectorAll('.elemento');
+    elementos.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.classList.add('visible');
+        } else {
+            el.classList.remove('visible');
+        }
+    });
+});
 </script>
 
 <style scoped>
@@ -31,6 +42,13 @@ html, body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+}
+.elemento {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+.elemento.visible {
+    opacity: 1;
 }
 
 main {
@@ -43,28 +61,30 @@ main {
 }
 
 .arrowIcon {
+  position: absolute; 
+  top:340px;
+  right: 70px; 
   color: white;
-  bottom: 20px;
-  margin-left: 84%;
   font-size: 24px;
   rotate: 180deg;
-  cursor: none;
+  cursor: pointer;
   opacity: 0;
-  animation: arrowAnimation 2s infinite;
+  animation: arrowAnimationReverse 2s infinite; 
+
 }
 
-@keyframes arrowAnimation {
+@keyframes arrowAnimationReverse {
   0% {
     opacity: 0;
-    transform: translateY(0);
+    transform: translateY(20px); 
   }
   50% {
     opacity: 1;
-    transform: translateY(10px);
+    transform: translateY(10px); 
   }
   100% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(0); 
   }
 }
 
@@ -89,7 +109,7 @@ main {
 
 footer {
   position: relative;
-  top: 51%;
+  top: 55%;
   left: 1.1%;
   width: 100%;
   color: white;
