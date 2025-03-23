@@ -2,11 +2,13 @@
 import { RouterLink, RouterView } from 'vue-router'
 import NavBar from './views/NavBar.vue'
 
+
 </script>
 
 <template>
   
   <div id="app">   
+    <Particles />
     <NavBar />
     <RouterView />
   </div>

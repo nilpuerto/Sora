@@ -1,7 +1,11 @@
 <template>
   <section id="home2-section">
     <div class="line"></div>
-    <h1 class="title">AI Benefits</h1>
+    <h1 class="title">
+  <span class="icon-circle">*</span>
+    What you'll get
+</h1>
+<h2 class="subtitle">We resolve problems associated with <br> creative procedures.</h2>
     <div class="benefits-container">
       <div class="benefit" @mouseenter="startGauge" @mouseleave="resetGauge">
         <div class="benefit-background"></div>
@@ -22,25 +26,35 @@
           </div>
         </div>
       </div>
-      <div class="benefit" @mouseenter="showBell" @mouseleave="hideBell">
-        <div class="benefit-background"></div>
-        <h2>Real-Time Notifications</h2>
-        <p>Never miss an important moment. Sora keeps you updated with real-time notifications.</p>
-        <div class="bell-container" :class="{ active: isBellActive }">
-          <i class="fas fa-bell bell-icon"></i>
-        </div>
-      </div>
+      <div class="benefit" @mouseenter="flipNotifications" @mouseleave="resetNotifications">
+  <div class="benefit-background"></div>
+  <h2>Real-Time Notifications</h2>
+  <p>Never miss an important moment. Sora keeps you updated with real-time notifications.</p>
+  <div class="benefit-buttons">
+    </div>
+  <div class="notification-container">
+    <div class="notification-card" :class="{ flipped: isFlipped }">
+    </div>
+    <div class="notification-card notification-back" :class="{ flipped: isFlipped }">
+    </div>
+  </div>
+</div>
       <div class="benefit">
         <div class="benefit-background"></div>
         <h2>Privacy First</h2>
         <p>Your data is secure. Sora prioritizes your privacy and ensures your data is protected.</p>
+        <div class="benefit-buttons">
+    </div>
       </div>
     </div>
+    <div id="planet-container"></div>
   </section>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const gaugePercentage = ref(0);
 const gaugeStyle = ref({});
@@ -90,29 +104,76 @@ onUnmounted(() => {
   stopAudioProcessing();
 });
 
-const isBellActive = ref(false);
+onMounted(() => {
+  const container = document.getElementById('planet-container');
 
-const showBell = () => {
-  isBellActive.value = true;
-};
+  // Configuración básica
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(container.offsetWidth, container.offsetHeight);
+  renderer.setClearColor(0x000000); // Fondo negro
+  container.appendChild(renderer.domElement);
 
-const hideBell = () => {
-  isBellActive.value = false;
-};
+  // Crear la esfera (planeta)
+  const geometry = new THREE.SphereGeometry(5, 64, 64); // Radio y detalle
+  const textureLoader = new THREE.TextureLoader();
+  const material = new THREE.MeshBasicMaterial({
+    map: textureLoader.load('https://raw.githubusercontent.com/planet-texture/earth-wireframe/main/earth-wireframe.png'), // Textura del mapa mundi
+    transparent: true,
+  });
+  const sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
+
+  // Configurar la cámara
+  camera.position.z = 10;
+
+  // Controles de órbita (para mover el planeta)
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; // Movimiento suave
+  controls.dampingFactor = 0.05;
+  controls.enableZoom = false; // Deshabilitar el zoom
+
+  // Animación
+  const animate = () => {
+    requestAnimationFrame(animate);
+    sphere.rotation.y += 0.001; // Rotación automática
+    controls.update();
+    renderer.render(scene, camera);
+  };
+
+  animate();
+
+  // Ajustar el tamaño al cambiar el tamaño de la ventana
+  window.addEventListener('resize', () => {
+    camera.aspect = container.offsetWidth / container.offsetHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.offsetWidth, container.offsetHeight);
+  });
+});
+
+
 </script>
 
 <style scoped>
 #home2-section {
   padding: 20px;
-  height: 100vh;
+  height: 140vh;
+}
+#planet-container {
+  width: 100%;
+  height: 500px; /* Ajusta la altura según lo necesario */
+  margin-top: 50px;
+  background-color: black; /* Fondo negro */
+  overflow: hidden;
 }
 
 .line {
   background-color: rgb(58, 58, 58);
-  width: 98%;
+  width: 99%;
   height: 1px;
   margin-top: 5%;
-  animation: fadeIn 1s ease-in-out; /* Animación de entrada */
+  animation: fadeIn 1s ease-in-out; 
 }
 
 @keyframes fadeIn {
@@ -125,28 +186,75 @@ const hideBell = () => {
 }
 
 .title {
-  margin-top: 7%;
-  font-size: 34px;
-  color: rgb(255, 255, 255);
+  display: flex;
+  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #e1fd12;
   font-weight: 300;
-  margin-left: 1.3%;
-  padding-bottom: 5%;
+  margin-top: 100px;
+}
+
+.icon-circle {
+  width: 14px;
+  height: 14px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background-color: #e1fd12;
+  color: black;
+  font-size: 18px;
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: middle; 
+  position: relative;
+  top: 1px; 
+  font-weight: 600;
+  margin-bottom: 2px; 
+}
+
+
+.subtitle {
+  text-align: center;
+  font-size: 38px;
+  font-weight: 300;
+  margin: 10px 0 0; 
+  background: linear-gradient(to right, #ffffff 45%, #000000); 
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
 }
 
 .benefits-container {
   display: flex;
   justify-content: space-around;
-  margin-top: 20px;
+  margin-top: 5%;
 }
 
+.hashtag-button {
+  background-color: #e1fd12;
+  color: black;
+  border: none;
+  border-radius: 20px;
+  padding: 3px 10px; 
+  font-size: 12px; 
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+  margin-top: 3.5%
+}
+
+.hashtag-button:hover {
+  background-color: #d4e10c;
+}
 .benefit {
-  padding: 8px;
+  padding: 20px; 
   border-left: 1px solid rgba(255, 255, 255, 0.5);
   border-right: 1px solid rgba(255, 255, 255, 0.5);
   width: 30%;
   text-align: center;
   color: white;
-  height: 180px;
+  height: 200px;
   position: relative;
   overflow: hidden;
 }
@@ -214,7 +322,7 @@ const hideBell = () => {
 }
 
 .gauge-container {
-  margin-top: 20px;
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -266,47 +374,4 @@ const hideBell = () => {
   }
 }
 
-.bell-container {
-  position: relative;
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.bell-container.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.bell-icon {
-  font-size: 40px;
-  color: #e1fd12;
-  animation: none;
-}
-
-.bell-container.active .bell-icon {
-  animation: bellShake 0.5s ease infinite;
-}
-
-@keyframes bellShake {
-  0% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-15deg);
-  }
-  50% {
-    transform: rotate(15deg);
-  }
-  75% {
-    transform: rotate(-10deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
-}
 </style>
