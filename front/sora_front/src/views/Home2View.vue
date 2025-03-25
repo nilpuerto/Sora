@@ -47,17 +47,61 @@
     </div>
       </div>
     </div>
-    <div id="planet-container"></div>
+
+    <div class="footer-text">
+         <span class="left-text">•&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(A futuristic voice-powered AI)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•<br>built to organize your world</span>
+        <span class="right-text">ⓒ2025</span>
+    </div>
+      <div class="footer-image">
+      <img src="/photo1.jpg" alt="Footer Image" />
+     <div class="footer-buttons"><button class="hashtag">SORA WEBSITE ↗</button>
+        <button class="hashtag-button1">IOS ↗</button>
+        <button class="hashtag-button1">ANDROID ↗</button></div>
+      
+    </div>
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { ref, onMounted, onUnmounted, inject } from 'vue';
 
+const particlesEnabled = ref(true);
+
+onMounted(() => {
+  if (particlesEnabled.value) {
+    const container = document.createElement('div');
+    container.className = 'particles-container';
+    document.body.appendChild(container);
+
+    const particleCount = 60;
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+
+      particle.style.left = `${Math.random() * 100}vw`;
+      particle.style.top = `${Math.random() * 100}vh`;
+      particle.style.opacity = (0.1 + Math.random() * 0.3).toFixed(2);
+      particle.style.width = `${1 + Math.random()}px`;
+      particle.style.height = particle.style.width;
+
+      particle.style.setProperty('--move-x', (Math.random() * 400 - 200));
+      particle.style.setProperty('--move-y', (Math.random() * 400 - 200));
+      particle.style.animationDuration = `${10 + Math.random() * 20}s`;
+
+      container.appendChild(particle);
+    }
+  }
+});
+
+onUnmounted(() => {
+  const container = document.querySelector('.particles-container');
+  if (container) {
+    container.remove();
+  }
+});
 const gaugePercentage = ref(0);
 const gaugeStyle = ref({});
+const isFlipped = ref(false);
 let audioContext, analyser, microphone, dataArray;
 
 const startAudioProcessing = async () => {
@@ -73,16 +117,16 @@ const startAudioProcessing = async () => {
     dataArray = new Uint8Array(bufferLength);
 
     const processAudio = () => {
-    analyser.getByteFrequencyData(dataArray);
-    const volume = Math.max(...dataArray); 
-    const percentage = Math.round(Math.min((volume / 256) * 100, 100)); 
-    gaugePercentage.value = percentage;
-    gaugeStyle.value = {
-      width: `${percentage}%`,
-      boxShadow: `0 0 10px #e1fd12, 0 0 ${percentage / 2}px #e1fd12`,
+      analyser.getByteFrequencyData(dataArray);
+      const volume = Math.max(...dataArray); 
+      const percentage = Math.round(Math.min((volume / 256) * 100, 100)); 
+      gaugePercentage.value = percentage;
+      gaugeStyle.value = {
+        width: `${percentage}%`,
+        boxShadow: `0 0 10px #e1fd12, 0 0 ${percentage / 2}px #e1fd12`,
+      };
+      requestAnimationFrame(processAudio); 
     };
-    requestAnimationFrame(processAudio); 
-  };
 
     processAudio();
   } catch (err) {
@@ -90,82 +134,37 @@ const startAudioProcessing = async () => {
   }
 };
 
-const stopAudioProcessing = () => {
-  if (audioContext) {
-    audioContext.close();
-  }
-};
 
+// Inicialización
 onMounted(() => {
   startAudioProcessing();
-});
-
-onUnmounted(() => {
-  stopAudioProcessing();
-});
-
-onMounted(() => {
   const container = document.getElementById('planet-container');
-
-  // Configuración básica
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(container.offsetWidth, container.offsetHeight);
-  renderer.setClearColor(0x000000); // Fondo negro
-  container.appendChild(renderer.domElement);
-
-  // Crear la esfera (planeta)
-  const geometry = new THREE.SphereGeometry(5, 64, 64); // Radio y detalle
-  const textureLoader = new THREE.TextureLoader();
-  const material = new THREE.MeshBasicMaterial({
-    map: textureLoader.load('https://raw.githubusercontent.com/planet-texture/earth-wireframe/main/earth-wireframe.png'), // Textura del mapa mundi
-    transparent: true,
-  });
-  const sphere = new THREE.Mesh(geometry, material);
-  scene.add(sphere);
-
-  // Configurar la cámara
-  camera.position.z = 10;
-
-  // Controles de órbita (para mover el planeta)
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; // Movimiento suave
-  controls.dampingFactor = 0.05;
-  controls.enableZoom = false; // Deshabilitar el zoom
-
-  // Animación
-  const animate = () => {
-    requestAnimationFrame(animate);
-    sphere.rotation.y += 0.001; // Rotación automática
-    controls.update();
-    renderer.render(scene, camera);
-  };
-
-  animate();
-
-  // Ajustar el tamaño al cambiar el tamaño de la ventana
-  window.addEventListener('resize', () => {
-    camera.aspect = container.offsetWidth / container.offsetHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
+  const cleanupPlanet = initPlanet(container);
+  
+  onUnmounted(() => {
+    stopAudioProcessing();
+    cleanupPlanet();
   });
 });
 
+const stopAudioProcessing = () => {
+  if (audioContext) audioContext.close();
+};
 
+// Funciones para las notificaciones
+const flipNotifications = () => {
+  isFlipped.value = true;
+};
+const resetNotifications = () => {
+  isFlipped.value = false;
+};
 </script>
 
 <style scoped>
+
 #home2-section {
   padding: 20px;
-  height: 140vh;
-}
-#planet-container {
-  width: 100%;
-  height: 500px; /* Ajusta la altura según lo necesario */
-  margin-top: 50px;
-  background-color: black; /* Fondo negro */
-  overflow: hidden;
+  height: 190vh;
 }
 
 .line {
@@ -176,6 +175,74 @@ onMounted(() => {
   animation: fadeIn 1s ease-in-out; 
 }
 
+
+.footer-image {
+  display: flex; /* Activa Flexbox */
+  align-items: center; /* Centra verticalmente los elementos */
+  justify-content: flex-start; /* Alinea los elementos al inicio */
+  margin-top: 20px;
+}
+
+.footer-image img {
+  width: 30%;
+  height: 490px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-left: 13%;
+  filter: contrast(1.2) brightness(0.9); /* Ajusta el contraste y brillo */
+  mix-blend-mode: multiply;
+}
+
+.footer-buttons {
+  gap: 30px; /* Espaciado entre los botones */
+  margin-left: 220px; /* Mueve los botones más a la derecha */
+}
+
+.hashtag {
+  display: inline-block;
+  padding: 8px 40px; /* Espaciado interno */
+  font-size: 14px; /* Tamaño del texto */
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+  background-color: #e1fd12; /* Fondo amarillo */
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-position 0.5s ease, box-shadow 0.5s ease;
+  background-size: 200% 200%;
+  background-image: linear-gradient(135deg, #e1fd12 50%, #d4e10c 50%);
+  background-position: 0 0;
+  width: 200px; /* Aumenta el ancho del botón */
+  margin-right: 30px;
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+}
+
+.hashtag:hover {
+  background-position: 100% 100%;
+  box-shadow: 0 0 10px #e1ff00;
+}
+
+.hashtag-button1 {
+  display: inline-block;
+  padding: 8px 30px; /* Reduce el tamaño del botón */
+  font-size: 14px; /* Reduce el tamaño del texto */
+  font-weight: bold;
+  color: #e1fd12; /* Texto amarillo */
+  background-color: transparent; /* Fondo transparente */
+  border: 1px solid #e1fd12; /* Borde amarillo */
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.5s ease, box-shadow 0.5s ease;
+  width: 150px; /* Ajusta el ancho */
+  margin-right: 30px;
+}
+
+.hashtag-button1:hover {
+  background-color: #e1fd12; /* Fondo amarillo al pasar el mouse */
+  color: black; /* Texto negro al pasar el mouse */
+  box-shadow: 0 0 10px #e1fd12;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -183,6 +250,20 @@ onMounted(() => {
   to {
     opacity: 1;
   }
+}
+.footer-text {
+  margin-top: 6%;
+  font-size: 500%;
+  color: #b6b6b6;
+  font-weight:500;
+  margin-bottom: 5%;
+}
+
+.right-text{
+
+  font-weight: 400;
+  margin-left: 24%;
+
 }
 
 .title {

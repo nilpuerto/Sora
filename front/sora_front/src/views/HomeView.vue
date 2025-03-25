@@ -22,16 +22,18 @@ No typing, no hassle—just seamless <span class="colorFont">AI-driven</span> as
 
 <script setup>
 import Home2View from './Home2View.vue';
+
+
 window.addEventListener('scroll', () => {
-    const elementos = document.querySelectorAll('.elemento');
-    elementos.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-            el.classList.add('visible');
-        } else {
-            el.classList.remove('visible');
-        }
-    });
+  const elementos = document.querySelectorAll('.elemento');
+  elementos.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('visible');
+    } else {
+      el.classList.remove('visible');
+    }
+  });
 });
 </script>
 
